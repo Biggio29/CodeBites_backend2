@@ -9,7 +9,6 @@ const getUserFromToken = (req) => {
     if (!token) {
       return null;
     }
-
     const secretKey = process.env.SECRET_KEY;
     const decoded = jwt.verify(token, secretKey);
     console.log("Token verificato per l'utente:", decoded.username, '| ID:', decoded.id);
@@ -24,12 +23,10 @@ module.exports = {
   getAllRecipes: async (req, res) => {
     try {
       console.log('Recupero di tutte le ricette...');
-
       const recipes = await Recipe.find()
         .sort({ createdAt: -1 })
         .populate('author', 'username -_id')
         .select('imgSrc title description createdAt');
-
       console.log('Ricette recuperate:', recipes.length);
       res.json(recipes);
     } catch (error) {
@@ -133,4 +130,3 @@ module.exports = {
     }
   }
 };
-

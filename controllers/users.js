@@ -82,7 +82,6 @@ module.exports = {
           }
 
           if (isMatch) {
-            console.log('Password corretta per l\'utente:', username);
             const token = generateToken(user);
             if (!token) return res.status(500).json({ error: 'Errore nella generazione del token' });
 

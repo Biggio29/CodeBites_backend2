@@ -13,7 +13,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connesso al DB"))
   .catch(err => console.log("Errore di connessione:", err));
 
-const allowedOrigins = ['http://localhost:3001'];
+const allowedOrigins = ['https://codebites-frontend2.onrender.com'];
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,

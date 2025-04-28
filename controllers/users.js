@@ -20,44 +20,34 @@ const generateToken = (user) => {
 };
 
 module.exports = {
-  register: (req, res) => {
+  register: async (req, res) => {
     const { username, password } = req.body;
-  
+    
     console.log('Tentativo di registrazione per l\'utente:', username);
   
-    User.findOne({ username })
-      .then(user => {
-        if (user) {
-          console.log('Username già in uso:', username);
-          return res.status(400).json({ error: "Username già in uso" });
-        }
+    try {
+      const existingUser = await User.findOne({ username });
   
-        bcrypt.hash(password, 10, (err, hashedPassword) => {
-          if (err) {
-            console.error('Errore nel hashing della password:', err);
-            return res.status(500).json({ error: "Errore nel hashing della password" });
-          }
+      if (existingUser) {
+        console.log('Username già in uso:', username);
+        return res.status(400).json({ error: "Username già in uso" });
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      console.log('Hashing della password completato con successo');
   
-          console.log('Hashing della password completato con successo');
-          User.create({
-            username,
-            password: hashedPassword,
-          })
-          .then(user => {
-            console.log('Registrazione completata con successo');
-            res.status(201).json({ message: "Utente registrato con successo" });
-          })
-          .catch(err => {
-            console.error('Errore nel salvataggio dell\'utente:', err);
-            res.status(500).json({ error: "Errore nel salvataggio dell'utente", details: err });
-          });
-        });
-      })
-      .catch(err => {
-        console.error('Errore nel recupero dell\'utente:', err);
-        res.status(500).json({ error: "Errore nel recupero dell\'utente", details: err });
+      const newUser = await User.create({
+        username,
+        password: hashedPassword,
       });
-  },
+  
+      console.log('Registrazione completata con successo');
+      return res.status(201).json({ message: "Utente registrato con successo" });
+  
+    } catch (err) {
+      console.error('Errore durante la registrazione:', err);
+      return res.status(500).json({ error: "Errore durante la registrazione dell'utente", details: err });
+    }
+  },  
   
   login: (req, res) => {
     const { username, password } = req.body;

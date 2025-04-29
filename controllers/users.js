@@ -96,7 +96,7 @@ module.exports = {
     console.log('Logout richiesto');
   
     try {
-      res.clearCookie('token', { path: '/', sameSite: 'None', secure: false });
+      res.clearCookie('token', { path: '/', sameSite: 'None', secure: true });
   
       return res.status(200).json({ message: 'Logout avvenuto con successo' });
   

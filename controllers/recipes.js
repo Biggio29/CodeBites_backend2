@@ -123,7 +123,7 @@ module.exports = {
 
       getIo().emit('recipesUpdated');
 
-      res.json({ message: "Ricetta eliminata con successo" });
+      return res.status(204);
     } catch (error) {
       console.error('Errore nella eliminazione della ricetta:', error);
       res.status(500).json({ message: 'Errore nella eliminazione della ricetta', error: error.message });

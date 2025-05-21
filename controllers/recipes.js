@@ -11,7 +11,6 @@ const getUserFromToken = (req) => {
     }
     const secretKey = process.env.SECRET_KEY;
     const decoded = jwt.verify(token, secretKey);
-    console.log("Token verificato per l'utente:", decoded.username, '| ID:', decoded.id);
     return decoded;
   } catch (err) {
     console.error('Errore nella verifica del token:', err);
@@ -22,12 +21,10 @@ const getUserFromToken = (req) => {
 module.exports = {
   getAllRecipes: async (req, res) => {
     try {
-      console.log('Recupero di tutte le ricette...');
       const recipes = await Recipe.find()
         .sort({ createdAt: -1 })
         .populate('author', 'username -_id')
         .select('imgSrc title description createdAt');
-      console.log('Ricette recuperate:', recipes.length);
       res.json(recipes);
     } catch (error) {
       console.error('Errore nel recupero delle ricette:', error);
@@ -37,8 +34,6 @@ module.exports = {
 
   getRecipesByLoggedUser: async (req, res) => {
     try {
-      console.log("Recupero ricette per l'utente loggato...");
-
       const user = getUserFromToken(req);
       if (!user) {
         return res.status(401).json({ message: "Token non valido o scaduto." });
@@ -57,8 +52,6 @@ module.exports = {
 
   addRecipe: async (req, res) => {
     try {
-      console.log('Tentativo di aggiungere una nuova ricetta...');
-
       const user = getUserFromToken(req);
       if (!user) {
         return res.status(401).json({ message: "Non sei autenticato, effettua il login" });

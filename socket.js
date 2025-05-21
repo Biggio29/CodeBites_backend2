@@ -9,8 +9,6 @@ const initializeSocket = (server) => {
       methods: ["GET", "POST", "DELETE"]
     }
   });
-  
-  console.log("Socket.io è stato inizializzato.");
 };
 
 const getIo = () => io;

@@ -28,7 +28,7 @@ module.exports = {
       res.json(recipes);
     } catch (error) {
       console.error('Errore nel recupero delle ricette:', error);
-      res.status(500).json({ message: 'Errore nel recupero delle ricette', error: error.message });
+      res.status(500).json({ error: 'Errore nel recupero delle ricette' });
     }
   },
 
@@ -36,7 +36,7 @@ module.exports = {
     try {
       const user = getUserFromToken(req);
       if (!user) {
-        return res.status(401).json({ message: "Token non valido o scaduto." });
+        return res.status(401).json({ error: "Token non valido o scaduto." });
       }
 
       const recipes = await Recipe.find({ author: user.id })
@@ -46,7 +46,7 @@ module.exports = {
       res.json(recipes);
     } catch (error) {
       console.error('Errore nel recupero delle ricette:', error);
-      res.status(500).json({ message: 'Errore nel recupero delle ricette', error: error.message });
+      res.status(500).json({ error: 'Errore nel recupero delle ricette' });
     }
   },
 
@@ -54,12 +54,12 @@ module.exports = {
     try {
       const user = getUserFromToken(req);
       if (!user) {
-        return res.status(401).json({ message: "Non sei autenticato, effettua il login" });
+        return res.status(401).json({ error: "Non sei autenticato, effettua il login" });
       }
 
       const { imgSrc, title, description, ingredients, instructions } = req.body;
       if (!imgSrc || !title || !description || !ingredients || !instructions) {
-        return res.status(400).json({ message: "Dati incompleti. Immagine, titolo e descrizione sono obbligatori." });
+        return res.status(400).json({ error: "Dati incompleti. Immagine, titolo e descrizione sono obbligatori." });
       }
 
       const newRecipe = await Recipe.create({
@@ -72,11 +72,11 @@ module.exports = {
       });
 
       getIo().emit('recipesUpdated');
-      
+
       res.status(201).json(newRecipe);
     } catch (error) {
       console.error('Errore nella creazione della ricetta:', error);
-      res.status(500).json({ message: 'Errore nella creazione della ricetta', error: error.message });
+      res.status(500).json({ error: 'Errore nella creazione della ricetta' });
     }
   },
 
@@ -86,13 +86,13 @@ module.exports = {
       const recipe = await Recipe.findById(recipeId).populate('author', 'username');
 
       if (!recipe) {
-        return res.status(404).json({ message: 'Ricetta non trovata' });
+        return res.status(404).json({ error: 'Ricetta non trovata' });
       }
 
       res.json(recipe);
     } catch (error) {
       console.error('Errore nel recupero della ricetta:', error);
-      res.status(500).json({ message: 'Errore nel recupero della ricetta', error: error.message });
+      res.status(500).json({ error: 'Errore nel recupero della ricetta' });
     }
   },
 
@@ -100,26 +100,26 @@ module.exports = {
     try {
       const user = getUserFromToken(req);
       if (!user) {
-        return res.status(401).json({ message: "Non sei autenticato" });
+        return res.status(401).json({ error: "Non sei autenticato" });
       }
 
       const recipe = await Recipe.findById(req.params.id);
       if (!recipe) {
-        return res.status(404).json({ message: "Ricetta non trovata" });
+        return res.status(404).json({ error: "Ricetta non trovata" });
       }
 
       if (recipe.author.toString() !== user.id) {
-        return res.status(403).json({ message: "Non sei autorizzato a eliminare questa ricetta" });
+        return res.status(403).json({ error: "Non sei autorizzato a eliminare questa ricetta" });
       }
 
       await Recipe.findByIdAndDelete(req.params.id);
 
       getIo().emit('recipesUpdated');
 
-      return res.status(204);
+      return res.status(204).send();
     } catch (error) {
       console.error('Errore nella eliminazione della ricetta:', error);
-      res.status(500).json({ message: 'Errore nella eliminazione della ricetta', error: error.message });
+      res.status(500).json({ error: 'Errore nella eliminazione della ricetta' });
     }
   }
 };
